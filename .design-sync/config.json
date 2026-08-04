@@ -1,5 +1,5 @@
 {
-  "projectId": "abb4a693-a14d-450f-89b7-30dbf2561e6f",
+  "projectId": "a164eb71-0d86-4bf4-b2f5-c90e63421caf",
   "shape": "package",
   "offScript": true,
   "note": "CSS-only design system (Duochrome). No JS package; converter cannot run. Upload is hand-produced: styles.css + preview cards + conventions header. See .design-sync/NOTES.md.",
