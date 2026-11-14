@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 — 2026-11-14
+
+- Fix: a `th.dc-num` header cell kept its 11px mono label size. 1.1.0 scoped `.dc-num` to `.dc-table .dc-num`, which out-ranked `.dc-table thead th` and set it to 14px. The 14px now applies to `tbody` only.
+
 ## 1.1.0 — 2026-11-14
 
 Folds back the refinements proven on ismail.kattakath.com. Additive: every 1.0.0

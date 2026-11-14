@@ -14,7 +14,7 @@ provider, no theme object, no wrapper.
 ```jsx
 import "./styles.css"; // fonts + all dc-* classes
 export default function App() {
-  return <button className="dc-btn dc-btn--primary">Deploy</button>;
+  return <button className="dc-btn dc-btn--fill">Deploy</button>;
 }
 ```
 
@@ -46,7 +46,7 @@ If text renders in a system sans instead of Roboto, `styles.css` (or its font
 ## Class vocabulary (real names — all defined in `_ds_bundle.css`)
 
 - **Type**: `dc-display` `dc-h1` `dc-h2` `dc-h3` `dc-lead` `dc-body` `dc-small` `dc-label` `dc-meta`
-- **Button** (`<button>`/`<a>`): `dc-btn` + `dc-btn--primary` | `dc-btn--text` + `dc-btn--sm` | `dc-btn--lg`; set native `disabled` for the hatch
+- **Button** (`<button>`/`<a>`): `dc-btn` + `dc-btn--fill` (1.0 alias `--primary`) | `dc-btn--text` + `dc-btn--sm` | `dc-btn--lg`; set native `disabled` for the hatch
 - **Fields**: `dc-field` wrapper · `dc-input` `dc-select` `dc-textarea` · `dc-input--error` + `dc-error` message
 - **Chips**: `dc-chip` · `dc-chip--on`
 - **Surfaces**: `dc-card` (+ `dc-card--hover`) · `dc-row` · `dc-modal` · `dc-toast` · `dc-empty` · `dc-section-head`
