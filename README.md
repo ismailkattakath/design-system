@@ -39,7 +39,8 @@ Icons are characters in Roboto Mono, never an icon library.
 
 No fades — opacity passes through every forbidden grey. Change happens by
 inversion, rule growth, character stepping or clip only. 120ms UI / 240ms page,
-linear or `steps()`.
+linear or `steps()`. Inversion itself is instant: a colour transition between
+ink and ground is a fade too, so hover and focus swap with no transition.
 
 ## Accent (optional)
 
@@ -55,7 +56,7 @@ Remove the red and the layout must still work.
 ```
 
 ```html
-<button class="dc-btn dc-btn--primary">Deploy</button>
+<button class="dc-btn dc-btn--fill">Deploy</button>
 <section class="dc-invert"> … inverted surface … </section>
 ```
 
