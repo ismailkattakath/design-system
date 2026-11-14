@@ -1,4 +1,4 @@
-/* duochrome.css — Duochrome design system, v1.1.0
+/* duochrome.css — Duochrome design system, v1.1.1
    Two colours, one typeface. Ink #000, ground #fff, nothing between.
    Load Roboto + Roboto Mono before this file. */
 
@@ -179,7 +179,8 @@ img, svg { display: block; max-width: 100%; }
   text-transform: uppercase;
 }
 .dc-table tbody tr:last-child td, .dc-table tbody tr:last-child th { border-bottom-width: var(--rule-base); }
-.dc-table .dc-num { font-size: 14px; text-align: right; }
+.dc-table .dc-num { text-align: right; }
+.dc-table tbody .dc-num { font-size: 14px; }  /* a header cell keeps the 11px mono label */
 /* a framed, horizontally scrollable table; the cue is a mono label, never a shadow */
 .dc-table-wrap { position: relative; overflow-x: auto; border: var(--rule-base) solid currentColor; }
 .dc-table-wrap .dc-table thead th { padding-top: var(--s4); }
