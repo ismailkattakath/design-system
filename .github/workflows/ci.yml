@@ -1,0 +1,68 @@
+name: ci
+
+# ONE required check: `gate` (shared landing system, kattakath/.github@3d5ad5b9e04c853dbb0d82446255c9ef9230332a).
+# `gate` always runs and asserts each job it needs ended EXACTLY as this event expects:
+# `success` where it should run, `skipped` where it should not. A skipped job reports
+# Success (GitHub docs), so a skippable job must never BE the required check.
+# This repo is owned by a personal account: GitHub offers it no merge queue, QUEUE_ENABLED
+# stays unset, and the heavy jobs run on every PR and every push to main.
+#
+# Offline by construction: the checks read only the repository. Nothing here needs a secret.
+
+on:
+  push:
+    branches: [main]        # the maintainer's direct pushes; this is the only check they get
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+
+concurrency:
+  # Push runs are keyed on the sha: with a ref key a newer push would cancel the older
+  # one's pending run and report a false red.
+  group: ci-${{ github.event.pull_request.number || (github.event_name == 'push' && github.sha) || github.ref }}
+  # Supersede stale PR runs; never cancel a queue or main run.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read            # no secrets in CI: a PR runs contributor code
+
+jobs:
+  # THE ONLY REQUIRED CHECK. Its job id is part of the ruleset; never rename it.
+  gate:
+    if: ${{ !cancelled() }}
+    needs: [gitleaks, flake-check]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      # `expect` holds a deliberate SECOND copy of the heavy jobs' `if:`. If they drift, gate goes red.
+      - uses: kattakath/.github/actions/gate@3d5ad5b9e04c853dbb0d82446255c9ef9230332a
+        with:
+          needs: ${{ toJSON(needs) }}
+          expect: >-
+            {"gitleaks": ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || vars.QUEUE_ENABLED != 'true' }},
+             "flake-check": ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || vars.QUEUE_ENABLED != 'true' }}}
+
+  # Secrets over the WHOLE history: a value one commit adds and a later one removes still leaks.
+  gitleaks:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || vars.QUEUE_ENABLED != 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: gitleaks over all history
+        run: >
+          docker run --rm -v "$PWD:/repo" -w /repo ghcr.io/gitleaks/gitleaks:v8.30.1
+          git --no-banner --redact .
+
+  flake-check:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository || vars.QUEUE_ENABLED != 'true'
+    # The fleet's ONE flake-check (kattakath/.github nix-flake-check.yml, nix-config ADR-016),
+    # on both Linux arches. all-systems-eval first evaluates every output on every declared
+    # system, built nowhere (darwin included); then each leg builds its own system's checks:
+    # treefmt, version-header and the repo-kit drift checks (files:<path>).
+    uses: kattakath/.github/.github/workflows/nix-flake-check.yml@b62733e73be3432a47a4450250b013b2c2bb10ab # main
+    with:
+      all-systems-eval: true
